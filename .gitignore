@@ -1,0 +1,4 @@
+src/index.html
+src/bower_components
+node_modules
+dist/**/*
