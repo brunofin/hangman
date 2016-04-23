@@ -1,0 +1,5 @@
+<md-button class="md-primary md-raised"
+    ng-if="!isGameStarted()"
+    ng-click="newGame()">New game</md-button>
+<onscreen-keyboard ng-if="isGameStarted()"
+    disabled="!isKeyboardEnabled()"></onscreen-keyboard>

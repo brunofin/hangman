@@ -1,4 +1,8 @@
-src/index.html
-src/bower_components
 node_modules
+npm-debug.log
+src/bower_components
+src/index.html
+src/App.min.js
+src/styles.min.css
 dist/**/*
+*.map
