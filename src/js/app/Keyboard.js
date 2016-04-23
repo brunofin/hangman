@@ -4,20 +4,30 @@
   app.directive('onscreenKeyboard', ['$rootScope', function($rootScope) {
     return {
       scope: {
-        disabled: '='
+        disabled: '=',
+        disabledKeys: '='
       },
       templateUrl: '/partials/keyboard.tmpl.html',
       link: function($scope, el) {
-        $scope.keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''); // <- that's lazyness, it's easier and less error-prone than writting ['A', 'B', 'C'...]
+        $scope.keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(function(key) {
+          return {
+            value: key.toLowerCase(),
+            disabled: false
+          }
+        });
 
         $scope.keypress = function(key) {
           $rootScope.$broadcast('osk-keypress', key);
-        }
+        };
 
-        console.log($scope);
+        $scope.isDisabled = function(key) {
+          return $scope.disabled || key.disabled;
+        };
 
-        $scope.$watch('disabled', function(d) {
-          console.log(d);
+        $scope.$watchCollection('disabledKeys', function(disabledKeys) {
+          $scope.keys.forEach(function(key) {
+            key.disabled = disabledKeys.includes(key.value);
+          });
         });
       }
     }

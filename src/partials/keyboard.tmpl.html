@@ -1,4 +1,4 @@
 <md-button ng-repeat="key in keys"
     class="md-primary"
-    ng-click="keypress(key)"
-    ng-disabled="disabled">{{ key }}</md-button>
+    ng-click="keypress(key.value)"
+    ng-disabled="isDisabled(key)">{{ key.value }}</md-button>

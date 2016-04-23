@@ -22,6 +22,7 @@
         el.addClass('flex');
 
         var state = Game.States.NOT_STARTED;
+        $scope.disabledKeys = new Array();
 
         $scope.newGame = function() {
           HangmanGame.startGame().then(function(response) {
@@ -44,10 +45,12 @@
         // since we are emitting game events to $rootScope, we neet to explicitly listen to $rootScope. Listening on $scope won't do.
         $rootScope.$on('hm-CorrectInput', function(ev, key) {
           console.info('correct input: ', key);
+          $scope.disabledKeys.push(key.toLowerCase());
         });
 
         $rootScope.$on('hm-WrongInput', function(ev, key) {
           console.info('wrong input: ', key);
+          $scope.disabledKeys.push(key.toLowerCase());
         });
 
         $rootScope.$on('hm-YouWin', function(ev, word, tries) {
