@@ -1,3 +1,11 @@
 hm-canvas {
   display: block;
+  .letter-container {
+    width: 1em;
+    height: 1em;
+    margin: 0.15em;
+    font-size: 2em;
+    background-color: rgb(247, 247, 247);
+    text-transform: capitalize;
+  }
 }

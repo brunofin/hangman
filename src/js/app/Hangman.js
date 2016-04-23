@@ -27,7 +27,20 @@
         $scope.newGame = function() {
           HangmanGame.startGame().then(function(response) {
             state = Game.States.PLAYING;
+
+            $scope.word = new Array();
+
+            console.log('Word has ' + HangmanGame.getWordLength() + ' letters. Good luck!');
+            for (var i = 0, l = HangmanGame.getWordLength(); i < l; i++) {
+              $scope.word[i] = null;
+            }
+
+            console.log($scope.word);
           })
+        }
+
+        $scope.getWrongLetters = function() {
+          return HangmanGame.getWrongLetters();
         }
 
         $scope.isKeyboardEnabled = function() {
@@ -43,9 +56,17 @@
         });
 
         // since we are emitting game events to $rootScope, we neet to explicitly listen to $rootScope. Listening on $scope won't do.
-        $rootScope.$on('hm-CorrectInput', function(ev, key) {
-          console.info('correct input: ', key);
-          $scope.disabledKeys.push(key.toLowerCase());
+        $rootScope.$on('hm-CorrectInput', function(ev, letter, indices) {
+          letter = letter.toLowerCase();
+
+          console.info('correct input: ', letter, indices);
+          $scope.disabledKeys.push(letter);
+
+          indices.forEach(function(index) {
+            $scope.word[index] = letter;
+          });
+
+          console.log($scope.word);
         });
 
         $rootScope.$on('hm-WrongInput', function(ev, key) {
@@ -67,6 +88,57 @@
       }
     }
   }]);
+
+  app.directive('hangingGuy', ['HangmanGame', function(HangmanGame) {
+    return {
+      templateUrl: '/partials/hangman/hanging-guy.tmpl.html',
+      link: function($scope, el) {
+        $scope.isHeadVisible = function() {
+          return HangmanGame.getNumberOfTries() > 0;
+        }
+
+        $scope.isNeckVisible = function() {
+          return HangmanGame.getNumberOfTries() > 1;
+        }
+
+        $scope.isTorsoVisible = function() {
+          return HangmanGame.getNumberOfTries() > 2;
+        }
+
+        $scope.isLeftArmVisible = function() {
+          return HangmanGame.getNumberOfTries() > 3;
+        }
+
+        $scope.isRightArmVisible = function() {
+          return HangmanGame.getNumberOfTries() > 4;
+        }
+
+        $scope.isLeftHandVisible = function() {
+          return HangmanGame.getNumberOfTries() > 5;
+        }
+
+        $scope.isRightHandVisible = function() {
+          return HangmanGame.getNumberOfTries() > 6;
+        }
+
+        $scope.isLeftLegVisible = function() {
+          return HangmanGame.getNumberOfTries() > 7;
+        }
+
+        $scope.isRightLegVisible = function() {
+          return HangmanGame.getNumberOfTries() > 8;
+        }
+
+        $scope.isLeftFootVisible = function() {
+          return HangmanGame.getNumberOfTries() > 9;
+        }
+
+        $scope.isRightFootVisible = function() {
+          return HangmanGame.getNumberOfTries() > 10;
+        }
+      }
+    }
+  }])
 
 })(window.angular);
 

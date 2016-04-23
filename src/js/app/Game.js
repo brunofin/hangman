@@ -117,6 +117,9 @@
       getNumberOfTries: function() {
         return usedLetters.length;
       },
+      getWordLength: function() {
+        return gameWord.length;
+      }
     }
   }]);
 

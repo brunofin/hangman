@@ -1,6 +1,31 @@
 <md-button class="md-primary md-raised"
     ng-if="!isGameStarted()"
     ng-click="newGame()">New game</md-button>
-<onscreen-keyboard ng-if="isGameStarted()"
-    disabled="!isKeyboardEnabled()"
-    disabled-keys="disabledKeys"></onscreen-keyboard>
+
+<div layout="column"
+    ng-if="isGameStarted()">
+
+  <div layout="row"
+      layout-align="center center">
+
+    <div ng-repeat="letter in getWrongLetters()"
+        layout="row"
+        layout-align="center center">
+      <span>{{ letter }}</span>
+    </div>
+  </div>
+  <hanging-guy mistakes=""></hanging-guy>
+
+  <div layout="row"
+      layout-align="center center">
+
+    <div ng-repeat="letter in word track by $index"
+        layout="row"
+        layout-align="center center"
+        class="md-accent md-whiteframe-5dp letter-container">
+      <span>{{ letter }}</span>
+    </div>
+  </div>
+  <onscreen-keyboard disabled="!isKeyboardEnabled()"
+      disabled-keys="disabledKeys"></onscreen-keyboard>
+</div>
