@@ -1,3 +1,5 @@
+image: ruby:2.1
+
 deploy:
   stage: build
   script:
@@ -8,4 +10,3 @@ before_script:
   - curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
   - sudo apt-get install -y nodejs
   - sudo npm install -g npm@3.7.3
-  
