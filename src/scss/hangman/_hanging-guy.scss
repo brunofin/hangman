@@ -1,0 +1,138 @@
+@mixin viewbox($width, $height) {
+  width: $width;
+  height: $height;
+}
+
+@mixin horizontalFlip() {
+  transform: scaleX(-1);
+}
+
+$scale-factor: 0.5;
+$canvas-width: 617.14287px * $scale-factor;
+$canvas-height: 957.06695px * $scale-factor;
+
+/***/
+
+$head-top: 0px;
+$head-width: 397.14284px * $scale-factor;
+$head-height: 428.57144px * $scale-factor;
+
+/***/
+
+$neck-top: ($head-top + $head-height) - (30px * $scale-factor);
+$neck-width: 65.714286px * $scale-factor;
+$neck-height: 57.142855px * $scale-factor;
+
+/***/
+
+$torso-top: ($neck-top + $neck-height) - (15px * $scale-factor);
+$torso-width: 311.42858px * $scale-factor;
+$torso-height: 257.14285px * $scale-factor;
+
+/***/
+
+$arm-width: 162.7796px * $scale-factor;
+$arm-heigth: 162.58357px * $scale-factor;
+$arm-top: $torso-top + (50px * $scale-factor);
+$arm-h-offset: ($canvas-width/2) - ($torso-width/2) - $arm-width + (25px * $scale-factor);
+
+/***/
+
+$hand-width: 62.857145px * $scale-factor;
+$hand-height: 80px * $scale-factor;
+$hand-top: ($arm-top + $arm-heigth) - (15px * $scale-factor);
+$hand-h-offset: $arm-h-offset - ($hand-width/2);
+
+/***/
+
+$leg-width: 130.88218px * $scale-factor;
+$leg-height: 242.23085px * $scale-factor;
+$leg-top: ($torso-top + $torso-height) - (50px * $scale-factor);
+$leg-h-offset: ($canvas-width/2) - $leg-width - ($torso-width/5);
+
+/***/
+
+$foot-width: 109.43174px * $scale-factor;
+$foot-height: 79.848066px * $scale-factor;
+$foot-top: ($leg-top + $leg-height) - (20px * $scale-factor);
+$foot-h-offset: $leg-h-offset - $foot-width + (30px * $scale-factor);
+
+/***/
+
+hanging-guy {
+  width: $canvas-width;
+  height: $canvas-height;
+  position: relative;
+  * {
+    position: absolute;
+  }
+  #hm-head {
+    @include viewbox($head-width, $head-height);
+    top: $head-top;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+  #hm-neck {
+    @include viewbox($neck-width, $neck-height);
+    top: $neck-top;
+    left: 0;
+    right: 0;
+    z-index: 1
+  }
+  #hm-torso {
+    @include viewbox($torso-width, $torso-height);
+    top: $torso-top;
+    left: 0;
+    right: 0;
+  }
+  #hm-left-arm,
+  #hm-right-arm {
+    @include viewbox($arm-width, $arm-heigth);
+    top: $arm-top;
+  }
+  #hm-left-arm {
+    left: $arm-h-offset;
+  }
+  #hm-right-arm {
+    @include horizontalFlip();
+    right: $arm-h-offset;
+  }
+  #hm-left-hand,
+  #hm-right-hand {
+    @include viewbox($hand-width, $hand-height);
+    top: $hand-top;
+  }
+  #hm-left-hand {
+    left: $hand-h-offset;
+  }
+  #hm-right-hand {
+    @include horizontalFlip();
+    right: $hand-h-offset;
+  }
+  #hm-left-leg,
+  #hm-right-leg {
+    @include viewbox($leg-width, $leg-height);
+    top: $leg-top;
+    z-index: 1;
+  }
+  #hm-left-leg {
+    left: $leg-h-offset;
+  }
+  #hm-right-leg {
+    @include horizontalFlip();
+    right: $leg-h-offset
+  }
+  #hm-left-foot,
+  #hm-right-foot {
+    @include viewbox($foot-width, $foot-height);
+    top: $foot-top;
+  }
+  #hm-left-foot {
+    left: $foot-h-offset;
+  }
+  #hm-right-foot {
+    @include horizontalFlip();
+    right: $foot-h-offset
+  }
+}
