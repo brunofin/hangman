@@ -134,48 +134,26 @@
     return {
       templateUrl: '/partials/hangman/hanging-guy.tmpl.html',
       link: function($scope, el) {
-        $scope.isHeadVisible = function() {
-          return HangmanGame.getWrongLetters().length > 0;
+        $scope.validateVisibility = function(bodypart) {
+          try {
+            return HangmanGame.getWrongLetters().length > bodypart;
+          } catch (e) {
+            return false;
+          }
         }
 
-        $scope.isNeckVisible = function() {
-          return HangmanGame.getWrongLetters().length > 1;
-        }
-
-        $scope.isTorsoVisible = function() {
-          return HangmanGame.getWrongLetters().length > 2;
-        }
-
-        $scope.isLeftArmVisible = function() {
-          return HangmanGame.getWrongLetters().length > 3;
-        }
-
-        $scope.isRightArmVisible = function() {
-          return HangmanGame.getWrongLetters().length > 4;
-        }
-
-        $scope.isLeftHandVisible = function() {
-          return HangmanGame.getWrongLetters().length > 5;
-        }
-
-        $scope.isRightHandVisible = function() {
-          return HangmanGame.getWrongLetters().length > 6;
-        }
-
-        $scope.isLeftLegVisible = function() {
-          return HangmanGame.getWrongLetters().length > 7;
-        }
-
-        $scope.isRightLegVisible = function() {
-          return HangmanGame.getWrongLetters().length > 8;
-        }
-
-        $scope.isLeftFootVisible = function() {
-          return HangmanGame.getWrongLetters().length > 9;
-        }
-
-        $scope.isRightFootVisible = function() {
-          return HangmanGame.getWrongLetters().length > 10;
+        $scope.Bodypart = {
+          HEAD: 0,
+          NECK: 1,
+          TORSO: 2,
+          RIGHT_ARM: 3,
+          LEFT_ARM: 4,
+          RIGHT_HAND: 5,
+          LEFT_HAND: 6,
+          RIGHT_LEG: 7,
+          LEFT_LEG: 8,
+          RIGHT_FOOT: 9,
+          LEFT_FOOT: 10
         }
       }
     }
