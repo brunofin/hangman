@@ -1,20 +1,31 @@
-<md-button class="md-primary md-raised"
-    ng-if="!isGameStarted()"
-    ng-click="newGame()">New game</md-button>
+<div layout="column"
+    layout-align="center center"
+    ng-if="!isGameStarted()">
+
+  <md-button class="md-primary md-raised"
+      ng-if="!loading"
+      ng-disabled="loading"
+      ng-click="newGame()">New game</md-button>
+  <md-progress-circular md-mode="indeterminate"
+      ng-if="loading"
+      md-diameter="96"></md-progress-circular>
+</div>
 
 <div layout="column"
     ng-if="isGameStarted()">
 
   <div layout="row"
-      layout-align="center center">
+      layout-align="space-between center">
+    <hanging-guy></hanging-guy>
 
-    <div ng-repeat="letter in getWrongLetters()"
-        layout="row"
-        layout-align="center center">
-      <span>{{ letter }}</span>
+    <div class="wrong-letter-container">
+
+      <div ng-repeat="letter in getWrongLetters()"
+          class="md-accent md-whiteframe-5dp">
+        <span>{{ letter }}</span>
+      </div>
     </div>
   </div>
-  <hanging-guy mistakes=""></hanging-guy>
 
   <div layout="row"
       layout-align="center center">
@@ -26,6 +37,10 @@
       <span>{{ letter }}</span>
     </div>
   </div>
-  <onscreen-keyboard disabled="!isKeyboardEnabled()"
-      disabled-keys="disabledKeys"></onscreen-keyboard>
+
+  <div layout="column"
+      layout-align="start center">
+    <onscreen-keyboard disabled="!isKeyboardEnabled()"
+        disabled-keys="disabledKeys"></onscreen-keyboard>
+  </div>
 </div>

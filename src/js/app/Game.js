@@ -3,8 +3,7 @@
 
   app.factory('Game', [function() {
     return {
-      MAX_MISTAKES: 8,
-      EXTRA_LETTERS: 2,
+      MAX_MISTAKES: 11,
       States: {
         NOT_STARTED: -1,
         PLAYING: 0,
@@ -33,7 +32,7 @@
           // get a random word which length is bigger than the minimin steps required to lose the game
           WordsDAO.get().then(function(response) {
             if (response.status === 200) {
-              if (response.data.word.length < (Game.MAX_MISTAKES + Game.EXTRA_LETTERS)) {
+              if (response.data.word.length > Game.MAX_MISTAKES) {
                 findWord();
               } else {
                 gameWord = response.data.word.toLowerCase();

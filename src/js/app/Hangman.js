@@ -15,126 +15,147 @@
       });
   }]);
 
-  app.directive('hmCanvas', ['$rootScope', 'HangmanGame', 'Game', function($rootScope, HangmanGame, Game) {
-    return {
-      templateUrl: '/partials/hangman/canvas.tmpl.html',
-      link: function($scope, el) {
-        el.addClass('flex');
+  app.directive('hmCanvas', ['$rootScope', '$mdDialog', 'HangmanGame', 'Game',
+    function($rootScope, $mdDialog, HangmanGame, Game) {
+      return {
+        templateUrl: '/partials/hangman/canvas.tmpl.html',
+        link: function($scope, el) {
+          el.addClass('flex');
 
-        var state = Game.States.NOT_STARTED;
-        $scope.disabledKeys = new Array();
+          var state = Game.States.NOT_STARTED;
+          $scope.disabledKeys = new Array();
 
-        $scope.newGame = function() {
-          HangmanGame.startGame().then(function(response) {
-            state = Game.States.PLAYING;
+          $scope.loading = false;
 
-            $scope.word = new Array();
+          $scope.newGame = function() {
+            $scope.loading = true;
+            // TODO: word is exposed in response. fix that!
+            HangmanGame.startGame().then(function(response) {
+              $scope.loading = false;
+              state = Game.States.PLAYING;
 
-            console.log('Word has ' + HangmanGame.getWordLength() + ' letters. Good luck!');
-            for (var i = 0, l = HangmanGame.getWordLength(); i < l; i++) {
-              $scope.word[i] = null;
-            }
+              $scope.word = new Array();
 
-            console.log($scope.word);
-          })
-        }
+              for (var i = 0, l = HangmanGame.getWordLength(); i < l; i++) {
+                $scope.word[i] = null;
+              }
 
-        $scope.getWrongLetters = function() {
-          return HangmanGame.getWrongLetters();
-        }
+              $scope.disabledKeys.splice(0, $scope.disabledKeys.length);
 
-        $scope.isKeyboardEnabled = function() {
-          return state === Game.States.PLAYING;
-        };
+            })
+          };
 
-        $scope.isGameStarted = function() {
-          return state !== Game.States.NOT_STARTED;
-        };
+          $scope.getWrongLetters = function() {
+            return HangmanGame.getWrongLetters();
+          };
 
-        $scope.$on('osk-keypress', function(ev, key) {
-          HangmanGame.inputLetter(key);
-        });
+          $scope.isKeyboardEnabled = function() {
+            return state === Game.States.PLAYING;
+          };
 
-        // since we are emitting game events to $rootScope, we neet to explicitly listen to $rootScope. Listening on $scope won't do.
-        $rootScope.$on('hm-CorrectInput', function(ev, letter, indices) {
-          letter = letter.toLowerCase();
+          $scope.isGameStarted = function() {
+            return state !== Game.States.NOT_STARTED;
+          };
 
-          console.info('correct input: ', letter, indices);
-          $scope.disabledKeys.push(letter);
-
-          indices.forEach(function(index) {
-            $scope.word[index] = letter;
+          $scope.$on('osk-keypress', function(ev, key) {
+            HangmanGame.inputLetter(key);
           });
 
-          console.log($scope.word);
-        });
+          // since we are emitting game events to $rootScope, we neet to explicitly listen to $rootScope. Listening on $scope won't do.
+          $rootScope.$on('hm-CorrectInput', function(ev, letter, indices) {
+            letter = letter.toLowerCase();
 
-        $rootScope.$on('hm-WrongInput', function(ev, key) {
-          console.info('wrong input: ', key);
-          $scope.disabledKeys.push(key.toLowerCase());
-        });
+            console.info('correct input: ', letter, indices);
+            $scope.disabledKeys.push(letter);
 
-        $rootScope.$on('hm-YouWin', function(ev, word, tries) {
-          // show dialog: YOUWIN! play again
-          state = Game.States.YOUWIN;
-          console.info('you win: ', word, tries);
-        });
+            indices.forEach(function(index) {
+              $scope.word[index] = letter;
+            });
 
-        $rootScope.$on('hm-YouLose', function(ev, word, used) {
-          // show dialog: YOULOSE :( try again
-          state = Game.States.YOULOSE;
-          console.info('you lose: ', word, used);
-        });
+            console.log($scope.word);
+          });
+
+          $rootScope.$on('hm-WrongInput', function(ev, key) {
+            console.info('wrong input: ', key);
+            $scope.disabledKeys.push(key.toLowerCase());
+          });
+
+          $rootScope.$on('hm-YouWin', function(ev, word, tries) {
+            // show dialog: YOUWIN! play again
+            state = Game.States.YOUWIN;
+            console.info('you win: ', word, tries);
+
+            $mdDialog.show(
+              $mdDialog.alert()
+              .parent(angular.element(document.body))
+              .clickOutsideToClose(false)
+              .title('Congratulations!')
+              .textContent('You guessed the word "' + word + '" correctly!')
+              .ariaLabel('You win!')
+              .ok('Play again')
+            ).then(function(ok) {
+              if (ok) {
+                $scope.newGame()
+              }
+            });
+          });
+
+          $rootScope.$on('hm-YouLose', function(ev, word, used) {
+            // show dialog: YOULOSE :( try again
+            state = Game.States.YOULOSE;
+            console.info('you lose: ', word, used);
+          });
+        }
       }
     }
-  }]);
+  ]);
 
   app.directive('hangingGuy', ['HangmanGame', function(HangmanGame) {
     return {
       templateUrl: '/partials/hangman/hanging-guy.tmpl.html',
       link: function($scope, el) {
         $scope.isHeadVisible = function() {
-          return HangmanGame.getNumberOfTries() > 0;
+          return HangmanGame.getWrongLetters().length > 0;
         }
 
         $scope.isNeckVisible = function() {
-          return HangmanGame.getNumberOfTries() > 1;
+          return HangmanGame.getWrongLetters().length > 1;
         }
 
         $scope.isTorsoVisible = function() {
-          return HangmanGame.getNumberOfTries() > 2;
+          return HangmanGame.getWrongLetters().length > 2;
         }
 
         $scope.isLeftArmVisible = function() {
-          return HangmanGame.getNumberOfTries() > 3;
+          return HangmanGame.getWrongLetters().length > 3;
         }
 
         $scope.isRightArmVisible = function() {
-          return HangmanGame.getNumberOfTries() > 4;
+          return HangmanGame.getWrongLetters().length > 4;
         }
 
         $scope.isLeftHandVisible = function() {
-          return HangmanGame.getNumberOfTries() > 5;
+          return HangmanGame.getWrongLetters().length > 5;
         }
 
         $scope.isRightHandVisible = function() {
-          return HangmanGame.getNumberOfTries() > 6;
+          return HangmanGame.getWrongLetters().length > 6;
         }
 
         $scope.isLeftLegVisible = function() {
-          return HangmanGame.getNumberOfTries() > 7;
+          return HangmanGame.getWrongLetters().length > 7;
         }
 
         $scope.isRightLegVisible = function() {
-          return HangmanGame.getNumberOfTries() > 8;
+          return HangmanGame.getWrongLetters().length > 8;
         }
 
         $scope.isLeftFootVisible = function() {
-          return HangmanGame.getNumberOfTries() > 9;
+          return HangmanGame.getWrongLetters().length > 9;
         }
 
         $scope.isRightFootVisible = function() {
-          return HangmanGame.getNumberOfTries() > 10;
+          return HangmanGame.getWrongLetters().length > 10;
         }
       }
     }
