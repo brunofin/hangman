@@ -7,6 +7,7 @@
         return $http({
           method: 'GET',
           url: 'http://randomword.setgetgo.com/get.php',
+          timeout: 5000,
           transformResponse: function(data, headersGetter, status) {
             if (status === 200) {
               var r = Object.create({});

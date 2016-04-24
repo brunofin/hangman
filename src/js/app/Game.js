@@ -29,16 +29,21 @@
         usedLetters.splice(0, usedLetters.length);
 
         var findWord = function() {
-          // get a random word which length is bigger than the minimin steps required to lose the game
           WordsDAO.get().then(function(response) {
             if (response.status === 200) {
               if (response.data.word.length > Game.MAX_MISTAKES) {
                 findWord();
               } else {
                 gameWord = response.data.word.toLowerCase();
-                _promiseFn(response);
+                var _r = angular.copy(response);
+                delete _r.data;
+                _promiseFn(_r);
               }
+            } else {
+              _promiseFn(response);
             }
+          }).catch(function(response) {
+            _catchFn(response);
           });
         }
 
@@ -47,7 +52,10 @@
         return {
           then: function(promiseFn) {
             _promiseFn = promiseFn;
-          }
+          },
+          catch: function(catchFn) {
+            _catchFn = catchFn;
+          },
         }
       },
       inputLetter: function(letter) {

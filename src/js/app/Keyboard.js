@@ -16,6 +16,15 @@
           }
         });
 
+        angular.element(document.body).bind("keypress", function(event) {
+          var key = event.code[3];
+          $rootScope.$apply(function() {
+            $scope.keypress(key);
+          });
+
+          event.preventDefault();
+        });
+
         $scope.keypress = function(key) {
           $rootScope.$broadcast('osk-keypress', key);
         };

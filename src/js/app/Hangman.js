@@ -41,8 +41,19 @@
               }
 
               $scope.disabledKeys.splice(0, $scope.disabledKeys.length);
-
-            })
+            }).catch(function(response) {
+              $mdDialog.show(
+                $mdDialog.alert()
+                .parent(angular.element(document.body))
+                .clickOutsideToClose(false)
+                .title('Uh-Oh!')
+                .textContent(
+                  'It seems that the Random Words provider server isn\' responsing right now. Please try again later.'
+                )
+                .ariaLabel('API problem!')
+                .ok('OK')
+              );
+            });
           };
 
           $scope.getWrongLetters = function() {
@@ -65,32 +76,28 @@
           $rootScope.$on('hm-CorrectInput', function(ev, letter, indices) {
             letter = letter.toLowerCase();
 
-            console.info('correct input: ', letter, indices);
             $scope.disabledKeys.push(letter);
 
             indices.forEach(function(index) {
               $scope.word[index] = letter;
             });
 
-            console.log($scope.word);
           });
 
           $rootScope.$on('hm-WrongInput', function(ev, key) {
-            console.info('wrong input: ', key);
             $scope.disabledKeys.push(key.toLowerCase());
           });
 
           $rootScope.$on('hm-YouWin', function(ev, word, tries) {
             // show dialog: YOUWIN! play again
             state = Game.States.YOUWIN;
-            console.info('you win: ', word, tries);
 
             $mdDialog.show(
               $mdDialog.alert()
               .parent(angular.element(document.body))
               .clickOutsideToClose(false)
               .title('Congratulations!')
-              .textContent('You guessed the word "' + word + '" correctly!')
+              .textContent('You guessed the word "' + word.toUpperCase() + '" correctly!')
               .ariaLabel('You win!')
               .ok('Play again')
             ).then(function(ok) {
@@ -103,7 +110,20 @@
           $rootScope.$on('hm-YouLose', function(ev, word, used) {
             // show dialog: YOULOSE :( try again
             state = Game.States.YOULOSE;
-            console.info('you lose: ', word, used);
+
+            $mdDialog.show(
+              $mdDialog.alert()
+              .parent(angular.element(document.body))
+              .clickOutsideToClose(false)
+              .title('You lose!')
+              .textContent('You didn\'t guess the word "' + word.toUpperCase() + '"!')
+              .ariaLabel('You lose!')
+              .ok('Try again')
+            ).then(function(ok) {
+              if (ok) {
+                $scope.newGame()
+              }
+            });
           });
         }
       }

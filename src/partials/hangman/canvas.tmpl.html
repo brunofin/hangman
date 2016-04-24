@@ -15,30 +15,56 @@
     ng-if="isGameStarted()">
 
   <div layout="row"
-      layout-align="space-between center">
-    <hanging-guy></hanging-guy>
+      flex>
 
-    <div class="wrong-letter-container">
+    <div layout="column"
+        flex>
 
-      <div ng-repeat="letter in getWrongLetters()"
-          class="md-accent md-whiteframe-5dp">
-        <span>{{ letter }}</span>
+      <div layout="row"
+          flex>
+        <hanging-guy></hanging-guy>
+
+        <div flex
+            layout="column"
+            layout-align="start end">
+
+          <div class="wrong-letter-container">
+
+            <div ng-repeat="letter in getWrongLetters()"
+                class="md-accent md-whiteframe-5dp">
+              <span>{{ letter }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div layout="row"
+          layout-align="center center">
+
+        <div ng-repeat="letter in word track by $index"
+            layout="row"
+            layout-align="center center"
+            class="md-accent md-whiteframe-5dp letter-container">
+          <span>{{ letter }}</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div layout="row"
-      layout-align="center center">
-
-    <div ng-repeat="letter in word track by $index"
-        layout="row"
-        layout-align="center center"
-        class="md-accent md-whiteframe-5dp letter-container">
-      <span>{{ letter }}</span>
+    <div layout="column"
+        hide-xs
+        show-sm
+        hide-gt-sm
+        flex="50"
+        layout-align="start end">
+      <onscreen-keyboard disabled="!isKeyboardEnabled()"
+          disabled-keys="disabledKeys"></onscreen-keyboard>
     </div>
   </div>
 
   <div layout="column"
+      show-xs
+      hide-sm
+      show-gt-sm
       layout-align="start center">
     <onscreen-keyboard disabled="!isKeyboardEnabled()"
         disabled-keys="disabledKeys"></onscreen-keyboard>
