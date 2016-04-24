@@ -69,13 +69,6 @@ gulp.task('default', ['minify-js:debug', 'fixscssstyle', 'fixhtmlstyle', 'inject
 
 
 /*
-Deploys the application to /dist folder
-*/
-gulp.task('deploy', ['minify-js'], function() {
-  // TODO
-});
-
-/*
 Formats SCSS files
 */
 gulp.task('fixscssstyle', function() {
@@ -136,13 +129,6 @@ Minifies JS in /src folder
 */
 gulp.task('minify-js:debug', ['fixjsstyle'], function() {
   return minifyJs(true);
-});
-
-/*
-Minifies JS in /dist folder
-*/
-gulp.task('minify-js', ['fixjsstyle'], function() {
-  return minifyJs();
 });
 
 /*
@@ -240,3 +226,40 @@ gulp.task('fixhtmlstyle', function() {
     .pipe(gulp.dest('src/partials'));
 });
 
+/** build tasks **/
+
+gulp.task('clean-last-build', function() {
+  return del(['dist/**/*.*']);
+});
+
+gulp.task('prepare-deploy', ['clean-last-build'], function() {
+  return gulp.src('src/**/*.*').pipe(gulp.dest('dist/'));
+});
+
+
+gulp.task('minify-css', ['prepare-deploy'], function() {
+  return minifyScss(false);
+});
+
+gulp.task('minify-js', ['minify-css'], function() {
+  return minifyJs(false);
+});
+
+gulp.task('inject-dependencies', ['minify-js'], function() {
+  return injectDependencies(false);
+})
+
+gulp.task('clean', ['inject-dependencies'], function() {
+  return del([
+    'dist/bower_components',
+    'dist/*.map',
+    'dist/index.src.html',
+    'dist/scss',
+    'dist/js',
+    'dist/dguard.js'
+  ]);
+});
+
+gulp.task('deploy', ['clean'], function() {
+  gutil.log('Deployed files to "./dist".');
+});
